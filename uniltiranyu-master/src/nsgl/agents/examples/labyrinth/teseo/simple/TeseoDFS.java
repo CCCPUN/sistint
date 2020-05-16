@@ -12,20 +12,20 @@ import java.util.Arrays;
  */
 public class TeseoDFS extends SimpleTeseoAgentProgram {
 	
-	protected boolean[][] m = new boolean[100][100];
-	protected int[][] pr = new int [100][100];
-	protected int x = 0;
-	protected int y = 0;
+	protected boolean[][] m = new boolean[1002][1002];
+	protected int[][] pr = new int [1002][1002];
+	protected int x = 500;
+	protected int y = 500;
 	protected int N = 0; //North 0, East 1, South 2, West 3
 	
     public TeseoDFS() {
-    	for(int i=0; i<100; i++) {
-    		for(int j=0; j<100; j++) {
+    	for(int i=0; i<1001; i++) {
+    		for(int j=0; j<1001; j++) {
     			pr[i][j] = -1;
     		}
     	}
-    	for(int i=0; i<100; i++) {
-    		for(int j=0; j<100; j++) {
+    	for(int i=0; i<1001; i++) {
+    		for(int j=0; j<1001; j++) {
     			m[i][j] = false;
     		}
     	}
@@ -68,6 +68,7 @@ public class TeseoDFS extends SimpleTeseoAgentProgram {
         		x = nx;
         		y = ny;
         		N=auxN;
+        		System.out.println("what" + N + " " + pr[nx][ny]);
         		return i;
         	}
         }else if( N == 1 ) {
@@ -153,7 +154,7 @@ public class TeseoDFS extends SimpleTeseoAgentProgram {
         	if(N==0) {N=pr[x][y-1]; return 2;}
         	if(N==1) {N=pr[x][y-1]; return 1;}
         	if(N==2) {N=pr[x][y-1]; return 0;}
-        	if(N==3) {N=pr[x][y-1]; return 2;}
+        	if(N==3) {N=pr[x][y-1]; return 3;}
         }else {
         	x--;
         	if(N==0) {N=pr[x+1][y]; return 3;}
@@ -161,6 +162,7 @@ public class TeseoDFS extends SimpleTeseoAgentProgram {
         	if(N==2) {N=pr[x+1][y]; return 1;}
         	if(N==3) {N=pr[x+1][y]; return 0;}
         }
+        System.out.println("Fuck");
         return 0;
     }
     
