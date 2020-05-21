@@ -16,8 +16,9 @@ vector<int> dx, id; //dx = all possible moves, id = identity state = 1, 2, ... ,
 struct node{ // Nodes of the "tree"
 	vector<int> a; int d, i, f, g, h; 
 	bool operator<(const node& u) const{//Sorting the nodes based on the value of f, from min to max;
-		return f > u.f; //note: pirority queue's top element is the greatest,
-						// ordering from max to min sets priority queue's top as min
+		return f > u.f; 
+		//note: pirority queue's top element is the greatest,
+		//ordering from max to min sets priority queue's top as min
 	}
 }; 
 /*
