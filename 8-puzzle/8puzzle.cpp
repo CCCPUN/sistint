@@ -16,7 +16,8 @@ vector<int> dx, id; //dx = all possible moves, id = identity state = 1, 2, ... ,
 struct node{ // Nodes of the "tree"
 	vector<int> a; int d, i, f, g, h; 
 	bool operator<(const node& u) const{//Sorting the nodes based on the value of f, from min to max;
-		return f < u.f;
+		return f > u.f; //note: pirority queue's top element is the greatest,
+						// ordering from max to min sets priority queue's top as min
 	}
 }; 
 /*
@@ -108,7 +109,8 @@ int heuris(vector<int>& a, int h){
 	for(int i = 0; i<n; ++i){
 		h1+=(a[i]!=(i+1)%n);
 		int x = a[i] ? a[i] : 9;
-		h0+=abs((i+1)/m - x/m) + abs(i%m - (x-1)%m);
+		x--;
+		h0+=abs(i/m - x/m) + abs(i%m - x%m);
 	}
 	if(h) return h1;
 	return h0;
@@ -162,9 +164,9 @@ int main(){
 	ldfs(u, done);
 	cout<<"Iterative DFS: "<<endl;
 	idfs(u, done);
-	cout<<"A* based on total manhattan disntace"<<endl;
+	cout<<"A* based on total manhattan distance"<<endl;
 	ast(u, 0);
-	cout<<"A* based on total number of missplacemenst"<<endl;
+	cout<<"A* based on total number of misplacements"<<endl;
 	ast(u, 1);
 	return 0;
 }
