@@ -13,7 +13,12 @@ typedef pair<int, int> pii;
  * */
 int n, m, limit, l; // n- puzzle, m = sqrt(n), limit = max depth, limit of depth;
 vector<int> dx, id; //dx = all possible moves, id = identity state = 1, 2, ... , n, 0; 
-struct node{ vector<int> a; int d, i, f, g, h; }; // Nodes of the "tree"
+struct node{ // Nodes of the "tree"
+	vector<int> a; int d, i, f, g, h; 
+	bool operator<(const node& u) const{//Sorting the nodes based on the value of f, from min to max;
+		return f < u.f;
+	}
+}; 
 /*
  * a = state of the game;
  * d = number of moves so far;
@@ -98,6 +103,42 @@ void idfs(node u, set<vector<int>>& done){ //Iterative DFS
 		ldfs(u, done); //Calls limited depth search;
 	}
 }
+int heuris(vector<int>& a, int h){
+	int h0 = 0, h1 = 0;
+	for(int i = 0; i<n; ++i){
+		h1+=(a[i]!=(i+1)%n);
+		int x = a[i] ? a[i] : 9;
+		h0+=abs((i+1)/m - x/m) + abs(i%m - (x-1)%m);
+	}
+	if(h) return h1;
+	return h0;
+}
+void ast(node root, int h){ //A* search
+	priority_queue<node> q;
+	q.push(root);
+	set<vector<int>> done;
+	while(!q.empty()){
+		node u = q.top(); q.pop();
+		if(u.a == id){
+			finish(u);
+			return;
+		}
+		for(int k : dx){
+			if(check(u.i, k)){
+				node v = u;
+				swap(v.a[v.i], v.a[v.i + k]);
+				if(!done.count(v.a)){
+					v.i+=k, v.d++;
+					v.g = u.g+1, v.h = heuris(v.a, h);
+					v.f = v.g + v.h;
+					q.push(v);
+					done.insert(v.a);
+				}else swap(v.a[v.i], v.a[v.i + k]);
+			}
+		}
+	}
+	
+}
 int main(){
 	ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
 	cin>>n;
@@ -121,5 +162,9 @@ int main(){
 	ldfs(u, done);
 	cout<<"Iterative DFS: "<<endl;
 	idfs(u, done);
+	cout<<"A* based on total manhattan disntace"<<endl;
+	ast(u, 0);
+	cout<<"A* based on total number of missplacemenst"<<endl;
+	ast(u, 1);
 	return 0;
 }
