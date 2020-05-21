@@ -11,15 +11,16 @@ typedef pair<int, int> pii;
  * I love Ylva Eriksson
  *
  * */
-int n, m, l; // n- puzzle, m = sqrt(n), l = limit of depth;
+int n, m, limit, l; // n- puzzle, m = sqrt(n), limit = max depth, limit of depth;
 vector<int> dx, id; //dx = all possible moves, id = identity state = 1, 2, ... , n, 0; 
 struct node{ vector<int> a; int d, i, f, g, h; }; // Nodes of the "tree"
 /*
  * a = state of the game;
  * d = number of moves so far;
+ * i = position of tile 0
  * f , g, h = functions and heuristics for A*
  */
-bool check(int from, int to){ //Checks if move whether a movement is valid or not
+bool check(int from, int to){ //Checks whether a movement is valid or not
 	if(to > 0) return ((from + to)%m >= from%m) && (from+to < n);
 	return ((from + to + m)%m <= from%m) && (from+to >= 0);
 }
@@ -29,11 +30,11 @@ void print(node& u){ //Prettty obvious
 		if(i%m == m-1) cout<<endl;
 	}
 }
-void finish(node& id){//Prints numbres of moves needed
+void finish(node& id){//Prints number of moves needed
 	cout<<"Number of moves needed: "<<id.d<<endl;
 	print(id);
 }
-node shuffle(node root){ //Desorder identity state
+node shuffle(node root){ //Desorder the identity state
 	set<vector<int>> done;
 	done.insert(root.a);
 	int cnt = 0;
@@ -90,6 +91,12 @@ void ldfs(node u, set<vector<int>>& done){ //Limited DFS
 	}
 }
 void idfs(node u, set<vector<int>>& done){ //Iterative DFS
+	for(int i = 0; i<=limit; ++i){ //Try all possible depths up to max depth
+		cout<<"Max depth: "<<i<<endl;
+		l = i;
+		set<vector<int>> done;
+		ldfs(u, done); //Calls limited depth search;
+	}
 }
 int main(){
 	ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
@@ -107,12 +114,12 @@ int main(){
 	cout<<"BFS: "<<endl;
 	bfs(u);
 	cout<<"Enter the depth limit: "<<endl;
-	cin>>l;
+	cin>>limit;
 	cout<<"Limited DFS: "<<endl;
 	set<vector<int>> done;
+	l = limit;
 	ldfs(u, done);
 	cout<<"Iterative DFS: "<<endl;
-	done.clear();
 	idfs(u, done);
 	return 0;
 }
