@@ -49,7 +49,6 @@ node shuffle(node root){
 	return root;
 }
 void bfs(node root){
-	vector<int> id = root.a;
 	cout<<"start: "<<endl;
 	print(root);
 	queue<node> q;
@@ -102,12 +101,12 @@ int main(){
 	root.a = id, root.d = 0, root.i = n-1;
 	cout<<"bfs: "<<endl;
 	bfs(shuffle(root));
-	int l; cin>>l;
-	set<vector<int>> done;
-	cout<<"ldfs: "<<endl;
+	cin>>l;
+	cout<<"ldfs"<<endl;
 	node u = shuffle(root);
 	print(u);
-	ldfs(u,done);
+	set<vector<int>> done;
+	ldfs(u, done);
 	return 0;
 }
 
