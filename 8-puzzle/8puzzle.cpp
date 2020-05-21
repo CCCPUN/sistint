@@ -44,7 +44,6 @@ node shuffle(node root){ //Desorder the identity state
 	set<vector<int>> done;
 	done.insert(root.a);
 	int cnt = 0;
-	srand(time(NULL));
 	while(cnt < 14){
 		int k = rand()%4;
 		k = dx[k];
@@ -160,8 +159,8 @@ int main(){
 	cout<<"Enter the depth limit: "<<endl;
 	cin>>limit;
 	l = limit;
+	srand(time(NULL));
 	for(int i=0; i<last; ++i){
-		srand(time(NULL));
 		node u = shuffle(root);
 		cout<<"Iteration:  "<<i+1<<endl;
 		cout<<"Current state: "<<endl;
