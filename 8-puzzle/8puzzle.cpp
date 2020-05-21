@@ -104,7 +104,8 @@ void idfs(node u, set<vector<int>>& done){ //Iterative DFS
 	}
 }
 int heuris(vector<int>& a, int h){
-	int h0 = 0, h1 = 0;
+	//h0 = total manhattan distance, h1 = total number of misplacements
+	int h0 = 0, h1 = 0; 
 	for(int i = 0; i<n; ++i){
 		h1+=(a[i]!=(i+1)%n);
 		int x = a[i] ? a[i] : 9;
