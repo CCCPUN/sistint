@@ -39,7 +39,6 @@ void print(node& u){ //Prettty obvious
 }
 void finish(node& id){//Prints number of moves needed
 	cout<<"Number of moves needed: "<<id.d<<endl;
-	print(id);
 }
 node shuffle(node root){ //Desorder the identity state
 	set<vector<int>> done;
@@ -152,22 +151,59 @@ int main(){
 	for(int i=0; i<n-1; ++i) id[i] = i+1; 
 	node root;
 	root.a = id, root.d = 0, root.i = n-1;
-	node u = shuffle(root);
-	cout<<"Current state: "<<endl;
-	print(u);
-	cout<<"BFS: "<<endl;
-	bfs(u);
+	int last;
+	cout<<"Enter the number of iterations: "<<endl;
+	cin>>last;
+	double bfsav = 0, ldfsav = 0, idfsav = 0, ast0av = 0, ast1av = 0;
+	chrono::steady_clock::time_point begin = std::chrono::steady_clock::now(); //Start time;
+	chrono::steady_clock::time_point end = std::chrono::steady_clock::now(); //End time;
 	cout<<"Enter the depth limit: "<<endl;
 	cin>>limit;
-	cout<<"Limited DFS: "<<endl;
-	set<vector<int>> done;
 	l = limit;
-	ldfs(u, done);
-	cout<<"Iterative DFS: "<<endl;
-	idfs(u, done);
-	cout<<"A* based on total manhattan distance"<<endl;
-	ast(u, 0);
-	cout<<"A* based on total number of misplacements"<<endl;
-	ast(u, 1);
+	for(int i=0; i<last; ++i){
+		srand(time(NULL));
+		node u = shuffle(root);
+		cout<<"Iteration:  "<<i+1<<endl;
+		cout<<"Current state: "<<endl;
+		print(u);
+		cout<<"BFS: "<<endl;
+		begin = std::chrono::steady_clock::now();
+		bfs(u);
+		end = std::chrono::steady_clock::now();
+		bfsav += chrono::duration_cast<std::chrono::microseconds>(end - begin).count(); 
+		
+		cout<<"Limited DFS: "<<endl;
+		set<vector<int>> done;
+		begin = std::chrono::steady_clock::now();
+		ldfs(u, done);
+		end = std::chrono::steady_clock::now();
+		ldfsav += chrono::duration_cast<std::chrono::microseconds>(end - begin).count(); 
+		
+		cout<<"Iterative DFS: "<<endl;
+		begin = std::chrono::steady_clock::now();
+		idfs(u, done);
+		end = std::chrono::steady_clock::now();
+		idfsav += chrono::duration_cast<std::chrono::microseconds>(end - begin).count(); 
+		
+		cout<<"A* based on total manhattan distance"<<endl;
+		begin = std::chrono::steady_clock::now();
+		ast(u, 0);
+		end = std::chrono::steady_clock::now();
+		ast0av += chrono::duration_cast<std::chrono::microseconds>(end - begin).count(); 
+		
+		cout<<"A* based on total number of misplacements"<<endl;
+		begin = std::chrono::steady_clock::now();
+		ast(u, 1);
+		end = std::chrono::steady_clock::now();
+		ast1av += chrono::duration_cast<std::chrono::microseconds>(end - begin).count(); 
+		cout<<endl;
+	}
+	cout<<"********************************************************************"<<endl;
+	cout<<"Total time used : "<<endl;
+	cout<<"BFS: "<<bfsav/(double)last<<endl;
+	cout<<"Limited DFS : "<<ldfsav/ (double)last<<endl;
+	cout<<"Iterative DFS : "<<idfsav/ (double)last<<endl;
+	cout<<"A* based on total manhattan distance : "<<ast0av/(double)last<<endl;
+	cout<<"A* based on total number of misplacements : "<<ast1av/(double)last<<endl;
 	return 0;
 }
