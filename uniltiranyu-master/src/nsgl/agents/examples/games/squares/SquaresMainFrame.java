@@ -32,7 +32,7 @@ public class SquaresMainFrame extends JFrame implements EnvironmentView{
 	 * 
 	 */
 	private static final long serialVersionUID = -6958542352671181413L;
-Agent white_agent;
+  Agent white_agent;
   Agent black_agent;
   String fileDir = ".";
   String fileName = null;
