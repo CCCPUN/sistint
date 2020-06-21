@@ -7,7 +7,7 @@ import nsgl.generic.array.Vector;
 /**
   *
   *
-  *@author cin>>UNombre;
+  *@author Equipo 6 - cin>>UNombre;
   *Jherson Adrian Medina Correa
   *Manuel David Medrano Monroy
   *Nicolas Eduardo Pardo Arias
@@ -40,13 +40,13 @@ public class squaresAgentHomework implements AgentProgram{
 		this.color = color;
 	}
 	
-	public triple go(boolean player, int d, int alpha, int beta,int n, int cur){
+	public triple go(boolean player, int d, int alpha, int beta,int n){
 		triple<Integer,Integer,Integer,Integer> ans = new triple(0,0,0,0);	
 		int mxI = 0;
 		int res = 1000000010;
 		int[][] add = new int[n+10][n+10];
 		boolean ff = player;
-		int cnt = cur;
+		int cnt = 0;
 		while(true && d<2){
 			boolean f = false;
 			for(int i=0; i<n; i++){
@@ -55,27 +55,35 @@ public class squaresAgentHomework implements AgentProgram{
 					int aux = dp[i][j];
 					if(aux == 7){
 						dp[i][j] += 8;
-						dp[i][j-1] += 8;
+						dp[i][j-1]++;
 						add[i][j] += 8;
-						add[i][j-1]+=8;
+						add[i][j-1]++;
+						cnt++;
+						if(dp[i][j-1]==15)cnt++;
 					}
 					if(aux == 11){
 						dp[i][j] += 4;
-						dp[i-1][j] += 4;
+						dp[i-1][j] += 2;
 						add[i][j]+=4;
-						add[i-1][j]+=4;
+						add[i-1][j]+=2;
+						cnt++;
+						if(dp[i-1][j]==15)cnt++;
 					}
 					if(aux == 13){
 						dp[i][j] += 2;
-						dp[i+1][j] += 2;
+						dp[i+1][j] += 4;
 						add[i][j] += 2;
-						add[i+1][j] += 2;
+						add[i+1][j] += 4;
+						cnt++;
+						if(dp[i+1][j]==15)cnt++;
 					}
 					if(aux == 14){
 						dp[i][j]++;
-						dp[i][j+1]++;
+						dp[i][j+1]+=8;
 						add[i][j]++;
-						add[i][j+1]++;
+						add[i][j+1]+=8;
+						cnt++;
+						if(dp[i][j+1]==15)cnt++;
 					}
 				}
 			}
@@ -88,25 +96,29 @@ public class squaresAgentHomework implements AgentProgram{
 			if(!f)break;
 		}
 		if( d == 0 ){
-			ans.setFourth(Integer.valueOf(cnt));
+			if(ff)ans.setFourth(Integer.valueOf(cnt));
 			return ans;
 		}
 		if( ff ){
 			res *= -1;
 			for(int i=0; i<n; i++){
-				for(int j=0; j<n; i++){
+				for(int j=0; j<n; j++){
 					for(int bit=0; bit<4; bit++){
-						if(((1<<bit)&dp[i][j]) > 0 )continue;
+						if(((dp[i][j]>>bit)&1) == 1)continue;
+						if(mxI == 21)break;
+						mxI++;
+						System.out.println(i+" "+j+" "+dp[i][j]+" "+bit);
 						dp[i][j] += (1<<bit);
-						if(bit == 0)dp[i][j+1]+=(1<<bit);
-						if(bit == 1)dp[i+1][j]+=(1<<bit);
-						if(bit == 2)dp[i-1][j]+=(1<<bit);
-						if(bit == 3)dp[i][j-1]+=(1<<bit);
-						triple<Integer,Integer,Integer,Integer> retu = go(false,d-1,alpha,beta,n, cnt);
-						if(bit == 0)dp[i][j+1]-=(1<<bit);
-						if(bit == 1)dp[i+1][j]-=(1<<bit);
-						if(bit == 2)dp[i-1][j]-=(1<<bit);
-						if(bit == 3)dp[i][j-1]-=(1<<bit);
+						if(bit == 0)dp[i][j+1]+=(1<<(Math.abs(bit-3)));
+						if(bit == 1)dp[i+1][j]+=(1<<(Math.abs(bit-3)));
+						if(bit == 2)dp[i-1][j]+=(1<<(Math.abs(bit-3)));
+						if(bit == 3)dp[i][j-1]+=(1<<(Math.abs(bit-3)));
+						triple<Integer,Integer,Integer,Integer> retu = go(false,d-1,alpha,beta,n);
+						dp[i][j] -= (1<<bit);
+						if(bit == 0)dp[i][j+1]-=(1<<(Math.abs(bit-3)));
+						if(bit == 1)dp[i+1][j]-=(1<<(Math.abs(bit-3)));
+						if(bit == 2)dp[i-1][j]-=(1<<(Math.abs(bit-3)));
+						if(bit == 3)dp[i][j-1]-=(1<<(Math.abs(bit-3)));
 						int val = retu.fourth();
 						if(res < val){
 							res = val;
@@ -119,25 +131,31 @@ public class squaresAgentHomework implements AgentProgram{
 						alpha = Math.max(alpha,val);
 						if(beta<=alpha)break;
 					}
+					if(mxI == 21) break;
 					if(beta<=alpha)break;
 				}
+				if(mxI == 21)break;
 				if(beta<=alpha)break;
 			}
 		}else{
 			for(int i=0; i<n; i++){
-				for(int j=0; j<n; i++){
+				for(int j=0; j<n; j++){
 					for(int bit=0; bit<4; bit++){
-						if(((1<<bit)&dp[i][j]) > 0 )continue;
+						if(((dp[i][j]>>bit)&1) == 1)continue;
+						if(mxI==21) break;
+						mxI++;
 						dp[i][j] += (1<<bit);
-						if(bit == 0)dp[i][j+1]+=(1<<bit);
-						if(bit == 1)dp[i+1][j]+=(1<<bit);
-						if(bit == 2)dp[i-1][j]+=(1<<bit);
-						if(bit == 3)dp[i][j-1]+=(1<<bit);
-						triple<Integer,Integer,Integer,Integer> retu = go(true,d-1,alpha,beta,n, cnt);
-						if(bit == 0)dp[i][j+1]-=(1<<bit);
-						if(bit == 1)dp[i+1][j]-=(1<<bit);
-						if(bit == 2)dp[i-1][j]-=(1<<bit);
-						if(bit == 3)dp[i][j-1]-=(1<<bit);
+						System.out.println(i+" "+j+" "+dp[i][j]+" "+bit);
+						if(bit == 0)dp[i][j+1]+=(1<<(Math.abs(bit-3)));
+						if(bit == 1)dp[i+1][j]+=(1<<(Math.abs(bit-3)));
+						if(bit == 2)dp[i-1][j]+=(1<<(Math.abs(bit-3)));
+						if(bit == 3)dp[i][j-1]+=(1<<(Math.abs(bit-3)));
+						triple<Integer,Integer,Integer,Integer> retu = go(true,d-1,alpha,beta,n);
+						dp[i][j] -= (1<<bit);
+						if(bit == 0)dp[i][j+1]-=(1<<(Math.abs(bit-3)));
+						if(bit == 1)dp[i+1][j]-=(1<<(Math.abs(bit-3)));
+						if(bit == 2)dp[i-1][j]-=(1<<(Math.abs(bit-3)));
+						if(bit == 3)dp[i][j-1]-=(1<<(Math.abs(bit-3)));
 						int val = retu.fourth();
 						if(res > val){
 							res = val;
@@ -150,8 +168,10 @@ public class squaresAgentHomework implements AgentProgram{
 						alpha = Math.min(alpha,val);
 						if(beta<=alpha)break;
 					}
+					if(mxI==21) break;
 					if(beta<=alpha)break;
 				}
+				if(mxI==21)break;
 				if(beta<=alpha)break;
 			}
 
@@ -163,28 +183,43 @@ public class squaresAgentHomework implements AgentProgram{
 	}
 	@Override
 	public Action compute( Percept p){
+		long time = (long)(200*Math.random());
+		try{
+			Thread.sleep(time);
+		}catch(Exception e){}
 		int n = Integer.parseInt((String)p.getAttribute(Squares.SIZE));
-		for(int i=0; i<n; i++){
-			for(int j=0; j<n; j++){
-				if(((String)p.getAttribute(i+":"+j+":"+Squares.LEFT)).equals(Squares.FALSE))
-					dp[i][j] += (1<<3);
-				if(((String)p.getAttribute(i+":"+j+":"+Squares.TOP)).equals(Squares.FALSE))
-					dp[i][j] += (1<<2);
-				if(((String)p.getAttribute(i+":"+j+":"+Squares.BOTTOM)).equals(Squares.FALSE))
-					dp[i][j] += (1<<1);
-				if(((String)p.getAttribute(i+":"+j+":"+Squares.RIGHT)).equals(Squares.FALSE))
-					dp[i][j] += (1<<0);
+		if(p.getAttribute(Squares.TURN).equals(color)){
+			System.out.println(color);
+			for(int i=0; i<n; i++)
+				for(int j=0; j<n; j++) dp[i][j] = 0;
+			for(int i=0; i<n; i++){
+				for(int j=0; j<n; j++){
+					if(((String)p.getAttribute(i+":"+j+":"+Squares.LEFT)).equals(Squares.TRUE))
+						dp[i][j] += (1<<3);
+					if(((String)p.getAttribute(i+":"+j+":"+Squares.TOP)).equals(Squares.TRUE))
+						dp[i][j] += (1<<2);
+					if(((String)p.getAttribute(i+":"+j+":"+Squares.BOTTOM)).equals(Squares.TRUE))
+						dp[i][j] += (1<<1);
+					if(((String)p.getAttribute(i+":"+j+":"+Squares.RIGHT)).equals(Squares.TRUE))
+						dp[i][j] += (1<<0);
+					System.out.print(dp[i][j]+" ");
+				}
+				System.out.print('\n');
 			}
-		}
-		boolean c = (color.equals("white"));
-		int oo = 1000000010;
-		triple<Integer,Integer,Integer,Integer> ans = go(c,2,-oo,oo,n,0);	
-		String move="";
-		if(ans.third() == 0) move = Squares.RIGHT;
-		if(ans.third() == 1) move = Squares.BOTTOM;
-		if(ans.third() == 2) move = Squares.TOP;
-		if(ans.third() == 3) move = Squares.LEFT;
-		return new Action(ans.first()+":"+ans.second()+":"+move);
+			boolean c = (color.equals("white"));
+			System.out.println(c);
+			int oo = 1000000010;
+			triple<Integer,Integer,Integer,Integer> ans = go(c,2,-oo,oo,n);	
+			String move="";
+			try{
+				if(ans.third() == 0) move = Squares.RIGHT;
+				if(ans.third() == 1) move = Squares.BOTTOM;
+				if(ans.third() == 2) move = Squares.TOP;
+				if(ans.third() == 3) move = Squares.LEFT;
+				return new Action(ans.first()+":"+ans.second()+":"+move);
+			}catch(Exception e){}
+		}	
+		return new Action(Squares.PASS);
 	}
 	
 	@Override
