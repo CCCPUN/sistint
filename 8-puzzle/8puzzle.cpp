@@ -143,6 +143,7 @@ void ast(node root, int h){ //A* search
 }
 int main(){
 	ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+	cout << "Enter the number of tiles: " << endl;
 	cin>>n;
 	n++;
 	m = sqrt(n);
